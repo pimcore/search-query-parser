@@ -27,6 +27,14 @@ class Query implements PartInterface
     }
 
     /**
+     * @return bool
+     */
+    public function isNegated()
+    {
+        return $this->negate;
+    }
+
+    /**
      * @param PartInterface $part
      */
     public function addPart(PartInterface $part)

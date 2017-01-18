@@ -45,6 +45,7 @@ class QueryBuilder
 
             /** @var \Zend_Db_Select $subQuery */
             $subQuery = null;
+            $negatedSubQuery = false;
 
             if ($part instanceof Term) {
                 $value = $part->getTerm();
@@ -65,15 +66,24 @@ class QueryBuilder
             } else if ($part instanceof Query) {
                 $subQuery = $select->getAdapter()->select();
                 $this->processQuery($subQuery, $part);
+
+                $negatedSubQuery = $part->isNegated();
             }
 
             if ($subQuery) {
                 // add assembled sub-query where condition to our main query
                 $lastKeyword = array_pop($keywordStack);
+
+                $subWhere = implode(' ', $subQuery->getPart(\Zend_Db_Select::WHERE));
+
+                if ($negatedSubQuery) {
+                    $subWhere = 'NOT(' . $subWhere . ')';
+                }
+
                 if (null !== $lastKeyword && $lastKeyword->getKeyword() === 'OR') {
-                    $select->orWhere(implode(' ', $subQuery->getPart(\Zend_Db_Select::WHERE)));
+                    $select->orWhere($subWhere);
                 } else {
-                    $select->where(implode(' ', $subQuery->getPart(\Zend_Db_Select::WHERE)));
+                    $select->where($subWhere);
                 }
             }
         }
