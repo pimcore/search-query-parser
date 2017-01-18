@@ -52,24 +52,27 @@ class Parser
 
             // terms (the actual values we're looking for)
             if ($token[0] === Lexer::T_TERM) {
-                if ($previousToken) {
-                    // AND-combine terms if no keyword is in between
-                    if ($previousToken[0] === Lexer::T_TERM) {
-                        $currentQuery->addPart(new Keyword('AND'));
-                    }
-                }
+                $term = new Term($token[2]);
 
-                // AND combine queries and terms if no keyword is in between
-                if ($currentQuery->getLastPart() instanceof Query) {
-                    $currentQuery->addPart(new Keyword('AND'));
+                // add an AND/OR before inserting the term if the last part was no keyword
+                $lastPart = $currentQuery->getLastPart();
+                if (!($lastPart instanceof Keyword)) {
+                    if ($term->isNegated()) {
+                        $currentQuery->addPart(new Keyword('AND'));
+                    } else {
+                        $currentQuery->addPart(new Keyword('OR'));
+                    }
                 }
 
                 $lastPart = $currentQuery->getLastPart();
                 if (null !== $lastPart && !($lastPart instanceof Keyword)) {
-                    throw new ParseException('Terms need to be combined with a keyword');
+                    throw new ParseException(sprintf(
+                        'Expected a keyword (AND/OR), but found a %s',
+                        (new \ReflectionClass($lastPart))->getShortName()
+                    ));
                 }
 
-                $currentQuery->addPart(new Term($token[2]));
+                $currentQuery->addPart($term);
             }
 
             // keywords (AND, OR)

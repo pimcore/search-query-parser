@@ -3,6 +3,7 @@
 require_once __DIR__ . '/vendor/autoload.php';
 
 $input = '!@mathias AND 1212 AND !foo OR (!(amya AND 12) blah) OR blubb';
+$input = 'mathias !(@5020)';
 
 dump($input);
 
