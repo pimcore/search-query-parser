@@ -42,7 +42,7 @@ class Parser
 
             if ($token[0] === Lexer::T_BRACE_CLOSE) {
                 if (count($queryStack) === 0) {
-                    throw new ParseException('Can\'t close sub query as query stack is empty');
+                    throw new ParserException('Can\'t close sub query as query stack is empty');
                 }
 
                 $closingQuery = $currentQuery;
@@ -66,7 +66,7 @@ class Parser
 
                 $lastPart = $currentQuery->getLastPart();
                 if (null !== $lastPart && !($lastPart instanceof Keyword)) {
-                    throw new ParseException(sprintf(
+                    throw new ParserException(sprintf(
                         'Expected a keyword (AND/OR), but found a %s',
                         (new \ReflectionClass($lastPart))->getShortName()
                     ));
@@ -78,7 +78,7 @@ class Parser
             // keywords (AND, OR)
             if (in_array($token[0], $keywords)) {
                 if ($previousToken && in_array($previousToken[0], $keywords)) {
-                    throw new ParseException(sprintf(
+                    throw new ParserException(sprintf(
                         'Keyword can\'t be succeeded by another keyword (%s %s)',
                         $previousToken[2], $token[2]
                     ));

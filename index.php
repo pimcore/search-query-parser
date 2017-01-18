@@ -25,7 +25,7 @@ $select = $db
     ->from('foo');
 
 
-$queryBuilder = new \Query\QueryBuilder([
+$queryBuilder = new \Query\QueryBuilder\ZendDbSelect([
     'foo',
     'bar'
 ]);

@@ -1,12 +1,12 @@
 <?php
 
-namespace Query;
+namespace Query\QueryBuilder;
 
 use Query\Part\Keyword;
 use Query\Part\Query;
 use Query\Part\Term;
 
-class QueryBuilder
+class ZendDbSelect
 {
     /**
      * @var array
