@@ -1,7 +1,8 @@
 {
     "require": {
         "nikic/phlexy": "^0.1.0",
-        "symfony/var-dumper": "^3.2"
+        "symfony/var-dumper": "^3.2",
+        "zendframework/zendframework1": "^1.12"
     },
     "autoload": {
         "psr-4": {

@@ -17,6 +17,9 @@ class Parser
         $this->tokens = $tokens;
     }
 
+    /**
+     * @return Query
+     */
     public function parse()
     {
         $query = new Query();

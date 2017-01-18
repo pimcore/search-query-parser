@@ -12,4 +12,20 @@ $tokens = $lexer->lex($input);
 dump($tokens);
 
 $parser = new \Query\Parser($tokens);
-dump($parser->parse());
+$query = $parser->parse();
+dump($query);
+
+$db = new Zend_Db_Adapter_Pdo_Sqlite(array(
+    'dbname' => ':memory:'
+));
+
+$select = $db
+    ->select()
+    ->from('foo');
+
+
+$queryBuilder = new \Query\QueryBuilder($select, $query);
+$select = $queryBuilder->getQuery();
+
+dump($select->__toString());
+
