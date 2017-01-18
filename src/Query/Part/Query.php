@@ -10,6 +10,23 @@ class Query implements PartInterface
     protected $parts = [];
 
     /**
+     * @var bool
+     */
+    protected $negate = false;
+
+    /**
+     * @param string $token The opening brace token
+     */
+    public function __construct($token = null)
+    {
+        if (null !== $token) {
+            if (strpos($token, '!') !== false) {
+                $this->negate = true;
+            }
+        }
+    }
+
+    /**
      * @param PartInterface $part
      */
     public function addPart(PartInterface $part)

@@ -1,10 +1,8 @@
 <?php
 
-
 namespace Query;
 
-
-use Query\Part\Identifier;
+use Query\Part\Term;
 use Query\Part\Keyword;
 use Query\Part\Query;
 
@@ -39,7 +37,7 @@ class Parser
             // brace open/close - sub-queries
             if ($token[0] === Lexer::T_BRACE_OPEN) {
                 array_push($queryStack, $currentQuery);
-                $currentQuery = new Query();
+                $currentQuery = new Query($token[2]);
             }
 
             if ($token[0] === Lexer::T_BRACE_CLOSE) {
@@ -52,32 +50,26 @@ class Parser
                 $currentQuery->addPart($closingQuery);
             }
 
-            // identifiers (the actual values we're looking for)
-            if ($token[0] === Lexer::T_IDENTIFIER) {
-                $negate = false;
-
+            // terms (the actual values we're looking for)
+            if ($token[0] === Lexer::T_TERM) {
                 if ($previousToken) {
-                    // AND-combine identifiers if no keyword is in between
-                    if ($previousToken[0] === Lexer::T_IDENTIFIER) {
+                    // AND-combine terms if no keyword is in between
+                    if ($previousToken[0] === Lexer::T_TERM) {
                         $currentQuery->addPart(new Keyword('AND'));
-                    }
-
-                    // negate identifier if there's an ! in front of it
-                    if ($previousToken && $previousToken[0] === Lexer::T_NEGATION) {
-                        $negate = true;
                     }
                 }
 
+                // AND combine queries and terms if no keyword is in between
                 if ($currentQuery->getLastPart() instanceof Query) {
                     $currentQuery->addPart(new Keyword('AND'));
                 }
 
                 $lastPart = $currentQuery->getLastPart();
                 if (null !== $lastPart && !($lastPart instanceof Keyword)) {
-                    throw new ParseException('Identifiers need to be combined with a keyword');
+                    throw new ParseException('Terms need to be combined with a keyword');
                 }
 
-                $currentQuery->addPart(new Identifier($token[2], $negate));
+                $currentQuery->addPart(new Term($token[2]));
             }
 
             // keywords (AND, OR)

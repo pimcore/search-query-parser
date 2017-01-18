@@ -2,59 +2,36 @@
 
 namespace Query;
 
-use Query\Part\Identifier;
 use Query\Part\Keyword;
-use Query\Part\PartInterface;
 use Query\Part\Query;
+use Query\Part\Term;
 
 class QueryBuilder
 {
-    const COMPARISON_EQUALS = 'equals';
-    const COMPARISON_LIKE = 'like';
-
-    /**
-     * @var \Zend_Db_Select
-     */
-    protected $select;
-
-    /**
-     * @var Query
-     */
-    protected $query;
-
     /**
      * @var array
      */
-    protected $fields = [
-        'foo',
-        'bar',
-        'bazinga'
-    ];
+    protected $fields;
 
     /**
-     * @var string
+     * @param array $fields
      */
-    protected $comparison = self::COMPARISON_EQUALS;
+    public function __construct(array $fields = [])
+    {
+        $this->fields = $fields;
+    }
 
     /**
      * @param \Zend_Db_Select $select
      * @param Query $query
+     * @return \Zend_Db_Select
      */
-    public function __construct(\Zend_Db_Select $select, Query $query)
+    public function processQuery(\Zend_Db_Select $select, Query $query)
     {
-        $this->select = $select;
-        $this->query  = $query;
-    }
+        if (empty($this->fields)) {
+            return $select;
+        }
 
-    public function getQuery()
-    {
-        $this->processQuery($this->select, $this->query);
-
-        return $this->select;
-    }
-
-    protected function processQuery(\Zend_Db_Select $select, Query $query)
-    {
         $previousPart = null;
 
         /** @var Keyword[] $keywordStack */
@@ -69,15 +46,20 @@ class QueryBuilder
             /** @var \Zend_Db_Select $subQuery */
             $subQuery = null;
 
-            if ($part instanceof Identifier) {
-                $value = '%' . $part->getIdentifier() . '%';
+            if ($part instanceof Term) {
+                $value = $part->getTerm();
+                if ($part->isFuzzy()) {
+                    $value = '%' . $value . '%';
+                }
 
                 $subQuery = $select->getAdapter()->select();
                 foreach ($this->fields as $field) {
+                    $condition = $this->buildTermCondition($part, $field);
+
                     if ($part->isNegated()) {
-                        $subQuery->where(sprintf('%s NOT LIKE ?', $field), $value);
+                        $subQuery->where($condition, $value);
                     } else {
-                        $subQuery->orWhere(sprintf('%s LIKE ?', $field), $value);
+                        $subQuery->orWhere($condition, $value);
                     }
                 }
             } else if ($part instanceof Query) {
@@ -95,5 +77,32 @@ class QueryBuilder
                 }
             }
         }
+
+        return $select;
+    }
+
+    /**
+     * @param Term $term
+     * @param string $field
+     * @return string
+     */
+    protected function buildTermCondition(Term $term, $field)
+    {
+        $condition = null;
+        if ($term->isFuzzy()) {
+            if ($term->isNegated()) {
+                $condition = '%s NOT LIKE ?';
+            } else {
+                $condition = '%s LIKE ?';
+            }
+        } else {
+            if ($term->isNegated()) {
+                $condition = '%s != ?';
+            } else {
+                $condition = '%s = ?';
+            }
+        }
+
+        return sprintf($condition, $field);
     }
 }

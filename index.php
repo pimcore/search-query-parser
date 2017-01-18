@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$input = 'mathias AND 1212 AND !foo OR ((amya AND 12) blah) OR blubb';
+$input = '!@mathias AND 1212 AND !foo OR (!(amya AND 12) blah) OR blubb';
 
 dump($input);
 
@@ -24,8 +24,11 @@ $select = $db
     ->from('foo');
 
 
-$queryBuilder = new \Query\QueryBuilder($select, $query);
-$select = $queryBuilder->getQuery();
+$queryBuilder = new \Query\QueryBuilder([
+    'foo',
+    'bar'
+]);
+$select = $queryBuilder->processQuery($select, $query);
 
 dump($select->__toString());
 
