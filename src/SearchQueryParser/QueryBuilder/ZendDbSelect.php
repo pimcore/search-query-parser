@@ -14,11 +14,20 @@ class ZendDbSelect
     protected $fields;
 
     /**
-     * @param array $fields
+     * @var array
      */
-    public function __construct(array $fields = [])
+    protected $options = [
+        'stripWildcards' => true
+    ];
+
+    /**
+     * @param array $fields
+     * @param array $options
+     */
+    public function __construct(array $fields = [], array $options = [])
     {
-        $this->fields = $fields;
+        $this->fields  = $fields;
+        $this->options = array_merge($this->options, $options);
     }
 
     /**
@@ -44,13 +53,13 @@ class ZendDbSelect
             }
 
             /** @var \Zend_Db_Select $subQuery */
-            $subQuery = null;
+            $subQuery        = null;
             $negatedSubQuery = false;
 
             if ($part instanceof Term) {
                 $value = $part->getTerm();
                 if ($part->isFuzzy()) {
-                    $value = '%' . $value . '%';
+                    $value = $this->buildFuzzyValue($value);
                 }
 
                 $subQuery = $select->getAdapter()->select();
@@ -92,6 +101,20 @@ class ZendDbSelect
     }
 
     /**
+     * @param string $option
+     * @param mixed $defaultValue
+     * @return mixed
+     */
+    protected function getOption($option, $defaultValue = null)
+    {
+        if (isset($this->options[$option])) {
+            return $this->options[$option];
+        }
+
+        return $defaultValue;
+    }
+
+    /**
      * @param Term $term
      * @param string $field
      * @return string
@@ -114,5 +137,21 @@ class ZendDbSelect
         }
 
         return sprintf($condition, $field);
+    }
+
+    /**
+     * @param string $value
+     * @return string
+     */
+    protected function buildFuzzyValue($value)
+    {
+        if ($this->getOption('stripWildcards', false)) {
+            $value = str_replace(['%', '_'], '', $value);
+        }
+
+        $value = '%' . $value . '%';
+
+
+        return $value;
     }
 }
