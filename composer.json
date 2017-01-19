@@ -1,10 +1,10 @@
 {
     "require": {
-        "nikic/phlexy": "^0.1.0",
-        "symfony/var-dumper": "^3.2"
+        "nikic/phlexy": "^0.1.0"
     },
     "require-dev": {
-        "zendframework/zendframework1": "^1.12"
+        "zendframework/zendframework1": "^1.12",
+        "symfony/var-dumper": "^3.2"
     },
     "suggest": {
         "zendframework/zendframework1": "If using the Zend_Db query builder"
