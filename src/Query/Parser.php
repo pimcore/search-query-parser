@@ -28,11 +28,6 @@ class Parser
 
         $previousToken = null;
 
-        $keywords = [
-            Lexer::T_AND,
-            Lexer::T_OR
-        ];
-
         foreach ($this->tokens as $token) {
             // brace open/close - sub-queries
             if ($token[0] === Lexer::T_BRACE_OPEN) {
@@ -76,8 +71,8 @@ class Parser
             }
 
             // keywords (AND, OR)
-            if (in_array($token[0], $keywords)) {
-                if ($previousToken && in_array($previousToken[0], $keywords)) {
+            if ($token[0] === Lexer::T_KEYWORD) {
+                if ($previousToken && $previousToken[0] === Lexer::T_KEYWORD) {
                     throw new ParserException(sprintf(
                         'Keyword can\'t be succeeded by another keyword (%s %s)',
                         $previousToken[2], $token[2]
