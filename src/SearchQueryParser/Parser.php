@@ -6,7 +6,7 @@ use SearchQueryParser\Part\Term;
 use SearchQueryParser\Part\Keyword;
 use SearchQueryParser\Part\Query;
 
-class Parser
+class Parser implements ParserInterface
 {
     /**
      * @param array $tokens
