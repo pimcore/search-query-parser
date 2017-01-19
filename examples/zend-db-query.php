@@ -6,12 +6,12 @@ $input = 'doe AND @1212 AND !foo OR (!(amya AND 12) blah) OR baz';
 $input = 'doe !"john"';
 dump($input);
 
-$lexer = new \Query\Lexer();
+$lexer = new \SearchQueryParser\Lexer();
 $tokens = $lexer->lex($input);
 
 dump($tokens);
 
-$parser = new \Query\Parser($tokens);
+$parser = new \SearchQueryParser\Parser($tokens);
 $query = $parser->parse();
 
 dump($query);
@@ -24,7 +24,7 @@ $select = $db
     ->select()
     ->from('foo');
 
-$queryBuilder = new \Query\QueryBuilder\ZendDbSelect([
+$queryBuilder = new \SearchQueryParser\QueryBuilder\ZendDbSelect([
     'foo',
     'bar'
 ]);

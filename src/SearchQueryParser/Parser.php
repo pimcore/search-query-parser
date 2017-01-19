@@ -1,10 +1,10 @@
 <?php
 
-namespace Query;
+namespace SearchQueryParser;
 
-use Query\Part\Term;
-use Query\Part\Keyword;
-use Query\Part\Query;
+use SearchQueryParser\Part\Term;
+use SearchQueryParser\Part\Keyword;
+use SearchQueryParser\Part\Query;
 
 class Parser
 {

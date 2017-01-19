@@ -1,6 +1,6 @@
 <?php
 
-namespace Query;
+namespace SearchQueryParser;
 
 class ParserException extends \RuntimeException
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Query\QueryBuilder;
+namespace SearchQueryParser\QueryBuilder;
 
-use Query\Part\Keyword;
-use Query\Part\Query;
-use Query\Part\Term;
+use SearchQueryParser\Part\Keyword;
+use SearchQueryParser\Part\Query;
+use SearchQueryParser\Part\Term;
 
 class ZendDbSelect
 {

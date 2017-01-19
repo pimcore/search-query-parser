@@ -1,6 +1,6 @@
 <?php
 
-namespace Query;
+namespace SearchQueryParser;
 
 use Phlexy\LexerDataGenerator;
 use Phlexy\LexerFactory\Stateless\UsingPregReplace;

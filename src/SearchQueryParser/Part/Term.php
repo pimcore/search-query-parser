@@ -1,6 +1,6 @@
 <?php
 
-namespace Query\Part;
+namespace SearchQueryParser\Part;
 
 class Term implements PartInterface
 {
