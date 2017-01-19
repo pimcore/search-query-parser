@@ -101,13 +101,13 @@ class ZendDbSelect
         $condition = null;
         if ($term->isFuzzy()) {
             if ($term->isNegated()) {
-                $condition = '%s NOT LIKE ?';
+                $condition = '%1$s IS NULL OR %1$s NOT LIKE ?';
             } else {
                 $condition = '%s LIKE ?';
             }
         } else {
             if ($term->isNegated()) {
-                $condition = '%s != ?';
+                $condition = '%1$s IS NULL OR %1$s != ?';
             } else {
                 $condition = '%s = ?';
             }
