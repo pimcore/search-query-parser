@@ -2,8 +2,8 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$input = 'doe AND @1212 AND !foo OR (!(amya AND 12) blah) OR baz';
-$input = 'doe !"john"';
+$input = 'doe AND "1212" AND !foo OR (!("amya" AND 12) blah) OR baz';
+//$input = 'doe !"john"';
 dump($input);
 
 $lexer = new \SearchQueryParser\Lexer();
@@ -11,8 +11,8 @@ $tokens = $lexer->lex($input);
 
 dump($tokens);
 
-$parser = new \SearchQueryParser\Parser($tokens);
-$query = $parser->parse();
+$parser = new \SearchQueryParser\Parser();
+$query = $parser->parse($tokens);
 
 dump($query);
 

@@ -8,17 +8,11 @@ use SearchQueryParser\Part\Query;
 
 class Parser
 {
-    protected $tokens = [];
-
-    public function __construct(array $tokens = [])
-    {
-        $this->tokens = $tokens;
-    }
-
     /**
+     * @param array $tokens
      * @return Query
      */
-    public function parse()
+    public function parse(array $tokens)
     {
         $query = new Query();
 
@@ -33,14 +27,14 @@ class Parser
             Lexer::T_TERM_QUOTED
         ];
 
-        for ($i = 0; $i < count($this->tokens); $i++) {
-            $token = $this->tokens[$i];
+        for ($i = 0; $i < count($tokens); $i++) {
+            $token = $tokens[$i];
 
             // brace open/close - sub-queries
             if ($token[0] === Lexer::T_BRACE_OPEN) {
                 array_push($queryStack, $currentQuery);
 
-                $negated      = $this->isNegated($i);
+                $negated      = $this->isNegated($i, $tokens);
                 $currentQuery = new Query($negated);
             }
 
@@ -58,7 +52,7 @@ class Parser
             if (in_array($token[0], $termTokens)) {
                 $value   = $this->normalizeTerm($token);
                 $fuzzy   = $token[0] !== Lexer::T_TERM_QUOTED;
-                $negated = $this->isNegated($i);
+                $negated = $this->isNegated($i, $tokens);
                 $term    = new Term($value, $fuzzy, $negated);
 
                 // add an AND/OR before inserting the term if the last part was no keyword
@@ -104,9 +98,10 @@ class Parser
      * Check if expression was negated by looking back at previous tokens
      *
      * @param $index
+     * @param array $tokens
      * @return bool
      */
-    protected function isNegated($index)
+    protected function isNegated($index, array $tokens)
     {
         $negated = false;
 
@@ -116,7 +111,7 @@ class Parser
         }
 
         for ($i = $startIndex; $i >= 0; $i--) {
-            if ($this->tokens[$i][0] === Lexer::T_NEGATION) {
+            if ($tokens[$i][0] === Lexer::T_NEGATION) {
                 $negated = !$negated;
             } else {
                 break;
