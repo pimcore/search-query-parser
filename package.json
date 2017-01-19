@@ -1,0 +1,13 @@
+{
+    "name": "pimcore-helpers-searchqueryparser",
+    "version": "0.1.0",
+    "description": "Parses a simplifies SQL-like query string into a syntax tree which can be used to build search queries",
+    "repository": {
+        "type": "git",
+        "url": "https://gitlab.elements.at/pimcore-helpers/SearchQueryParser.git"
+    },
+    "devDependencies": {
+        "gulp": "^3.9.1",
+        "project-semver": "git+https://gitlab.elements.at/development/project-semver.git"
+    }
+}
