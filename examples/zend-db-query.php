@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $input = 'doe AND @1212 AND !foo OR (!(amya AND 12) blah) OR baz';
-$input = 'doe !@john';
+$input = 'doe !"john"';
 dump($input);
 
 $lexer = new \Query\Lexer();

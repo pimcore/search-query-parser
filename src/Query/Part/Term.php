@@ -21,25 +21,14 @@ class Term implements PartInterface
 
     /**
      * @param string $term
+     * @param bool $fuzzy
+     * @param bool $negate
      */
-    public function __construct($term)
+    public function __construct($term, $fuzzy = true, $negate = false)
     {
-        $pattern = '/^([!@]+)/';
-        if (preg_match($pattern, $term, $matches)) {
-            $term = preg_replace($pattern, '', $term);
-
-            // negated
-            if (strpos($matches[0], '!') !== false) {
-                $this->negate = true;
-            }
-
-            // strict comparison
-            if (strpos($matches[0], '@') !== false) {
-                $this->fuzzy = false;
-            }
-        }
-
-        $this->term = $term;
+        $this->term   = $term;
+        $this->fuzzy  = $fuzzy;
+        $this->negate = $negate;
     }
 
     /**

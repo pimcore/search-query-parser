@@ -15,15 +15,11 @@ class Query implements PartInterface
     protected $negate = false;
 
     /**
-     * @param string $token The opening brace token
+     * @param bool $negate
      */
-    public function __construct($token = null)
+    public function __construct($negate = false)
     {
-        if (null !== $token) {
-            if (strpos($token, '!') !== false) {
-                $this->negate = true;
-            }
-        }
+        $this->negate = $negate;
     }
 
     /**

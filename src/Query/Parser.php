@@ -28,11 +28,20 @@ class Parser
 
         $previousToken = null;
 
-        foreach ($this->tokens as $token) {
+        $termTokens = [
+            Lexer::T_TERM,
+            Lexer::T_TERM_QUOTED
+        ];
+
+        for ($i = 0; $i < count($this->tokens); $i++) {
+            $token = $this->tokens[$i];
+
             // brace open/close - sub-queries
             if ($token[0] === Lexer::T_BRACE_OPEN) {
                 array_push($queryStack, $currentQuery);
-                $currentQuery = new Query($token[2]);
+
+                $negated      = $this->isNegated($i);
+                $currentQuery = new Query($negated);
             }
 
             if ($token[0] === Lexer::T_BRACE_CLOSE) {
@@ -46,12 +55,15 @@ class Parser
             }
 
             // terms (the actual values we're looking for)
-            if ($token[0] === Lexer::T_TERM) {
-                $term = new Term($token[2]);
+            if (in_array($token[0], $termTokens)) {
+                $value   = $this->normalizeTerm($token);
+                $fuzzy   = $token[0] !== Lexer::T_TERM_QUOTED;
+                $negated = $this->isNegated($i);
+                $term    = new Term($value, $fuzzy, $negated);
 
                 // add an AND/OR before inserting the term if the last part was no keyword
                 $lastPart = $currentQuery->getLastPart();
-                if (!($lastPart instanceof Keyword)) {
+                if ($lastPart && !($lastPart instanceof Keyword)) {
                     if ($term->isNegated()) {
                         $currentQuery->addPart(new Keyword('AND'));
                     } else {
@@ -86,5 +98,47 @@ class Parser
         }
 
         return $query;
+    }
+
+    /**
+     * Check if expression was negated by looking back at previous tokens
+     *
+     * @param $index
+     * @return bool
+     */
+    protected function isNegated($index)
+    {
+        $negated = false;
+
+        $startIndex = $index - 1;
+        if ($startIndex < 0) {
+            return $negated;
+        }
+
+        for ($i = $startIndex; $i >= 0; $i--) {
+            if ($this->tokens[$i][0] === Lexer::T_NEGATION) {
+                $negated = !$negated;
+            } else {
+                break;
+            }
+        }
+
+        return $negated;
+    }
+
+    /**
+     * Normalize term (strip quotes)
+     *
+     * @param array $token
+     * @return string
+     */
+    protected function normalizeTerm(array $token)
+    {
+        $term = $token[2];
+        if ($token[0] === Lexer::T_TERM_QUOTED) {
+            $term = preg_replace('/^"(.*)"$/', '$1', $term);
+        }
+
+        return $term;
     }
 }
