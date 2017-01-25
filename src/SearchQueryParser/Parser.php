@@ -58,11 +58,7 @@ class Parser implements ParserInterface
                 // add an AND/OR before inserting the term if the last part was no keyword
                 $lastPart = $currentQuery->getLastPart();
                 if ($lastPart && !($lastPart instanceof Keyword)) {
-                    if ($term->isNegated()) {
-                        $currentQuery->addPart(new Keyword('AND'));
-                    } else {
-                        $currentQuery->addPart(new Keyword('OR'));
-                    }
+                    $currentQuery->addPart(new Keyword('AND'));
                 }
 
                 $lastPart = $currentQuery->getLastPart();
