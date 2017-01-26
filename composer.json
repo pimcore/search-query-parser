@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "SearchQueryParser\\": "src/SearchQueryParser/"
+            "SearchQueryParser\\": "src/"
         }
     }
 }
