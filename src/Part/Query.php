@@ -47,6 +47,19 @@ class Query implements PartInterface
     }
 
     /**
+     * @param int $index
+     * @return PartInterface
+     */
+    public function getPart($index)
+    {
+        if (isset($this->parts[$index])) {
+            return $this->parts[$index];
+        }
+
+        throw new \OverflowException('Invalid part index');
+    }
+
+    /**
      * @return PartInterface
      */
     public function getLastPart()
