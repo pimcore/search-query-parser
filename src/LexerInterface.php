@@ -2,9 +2,9 @@
 
 namespace SearchQueryParser;
 
-use Phlexy\Lexer;
+use Phlexy\Lexer as PhlexyLexer;
 
-interface LexerInterface extends Lexer
+interface LexerInterface extends PhlexyLexer
 {
     const T_WHITESPACE = 0;
     const T_BRACE_OPEN = 1;
