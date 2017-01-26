@@ -2,6 +2,7 @@ stages:
   - unit_test
 
 before_script:
+  - docker-php-ext-enable zip opcache
   - composer install
 
 cache:
