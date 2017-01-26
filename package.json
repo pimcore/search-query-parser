@@ -1,6 +1,6 @@
 {
     "name": "pimcore-helpers-searchqueryparser",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "description": "Parses a simplifies SQL-like query string into a syntax tree which can be used to build search queries",
     "repository": {
         "type": "git",
