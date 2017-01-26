@@ -1,0 +1,25 @@
+stages:
+  - unit_test
+
+before_script:
+  - composer install
+
+cache:
+  key: "$CI_BUILD_REF_NAME"
+  paths:
+  - vendor/
+
+# See https://blog.bitexpert.de/blog/running-matrix-builds-with-gitlab-ci/
+.unit_test_template: &unit_test_definition
+  stage: unit_test
+  when: always
+  script:
+    - phpunit
+
+test:unit:php56:
+  <<: *unit_test_definition
+  image: tetraweb/php:5.6
+
+test:unit:php71:
+  <<: *unit_test_definition
+  image: tetraweb/php:7.1
