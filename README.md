@@ -1,7 +1,12 @@
 # SearchQueryParser
 
 A basic search query parsing library which can be used to transform free-text searches 
-into SQL (or other) queries. Currently used with customer data framework (CMF). See [examples/](examples/) for working examples.
+into SQL (or other) queries. The analyzed search query can be used to build complex
+(SQL) queries, searching for a term in multiple fields. Take a look at the 
+[`Zend_Db` end to end test](test/ZendDbEndToEndTest.php#L71) an an example or have a
+look into [examples/](examples/) for working examples.
+
+Currently used with customer data framework (CMF).
 
 ## Syntax 
 
