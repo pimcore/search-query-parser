@@ -7,7 +7,7 @@ use SearchQueryParser\Part\Query;
 interface ParserInterface
 {
     /**
-     * @param array $tokens
+     * @param Token[] $tokens
      *
      * @return Query
      */

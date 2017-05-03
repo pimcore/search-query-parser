@@ -2,20 +2,21 @@
 
 namespace SearchQueryParser;
 
+use Phlexy\Lexer as PhlexyLexer;
 use Phlexy\LexerDataGenerator;
 use Phlexy\LexerFactory\Stateless\UsingPregReplace;
 
 class Lexer implements LexerInterface
 {
     /**
-     * @var \Phlexy\Lexer
+     * @var PhlexyLexer
      */
     protected $lexer;
 
     /**
-     * @param \Phlexy\Lexer|null $lexer
+     * @param PhlexyLexer|null $lexer
      */
-    public function __construct(\Phlexy\Lexer $lexer = null)
+    public function __construct(PhlexyLexer $lexer = null)
     {
         if (null === $lexer) {
             $this->lexer = $this->buildDefaultLexer();
@@ -27,23 +28,24 @@ class Lexer implements LexerInterface
     /**
      * @return array
      */
-    protected function getDefaultDefinition()
+    protected function getDefaultDefinition(): array
     {
         return [
-            '\('           => static::T_BRACE_OPEN,
-            '\)'           => static::T_BRACE_CLOSE,
-            '(AND|OR)'     => static::T_KEYWORD,
-            '!'            => static::T_NEGATION,
-            '"[^"]+"'      => static::T_TERM_QUOTED,
-            '[^\s!@\(\)]+' => static::T_TERM,
-            '\s+'          => static::T_WHITESPACE,
+            '\('           => Tokens::T_BRACE_OPEN,
+            '\)'           => Tokens::T_BRACE_CLOSE,
+            '(AND|OR)'     => Tokens::T_KEYWORD,
+            '!'            => Tokens::T_NEGATION,
+            '"[^"]+"'      => Tokens::T_TERM_QUOTED,
+            "'[^']+'"      => Tokens::T_TERM_QUOTED_SINGLE,
+            '[^\s!@\(\)]+' => Tokens::T_TERM,
+            '\s+'          => Tokens::T_WHITESPACE,
         ];
     }
 
     /**
-     * @return \Phlexy\Lexer
+     * @return PhlexyLexer
      */
-    protected function buildDefaultLexer()
+    protected function buildDefaultLexer(): PhlexyLexer
     {
         $factory = new UsingPregReplace(
             new LexerDataGenerator()
@@ -58,16 +60,22 @@ class Lexer implements LexerInterface
     /**
      * @param $string
      *
-     * @return array
+     * @return Token[]
      */
-    public function lex($string)
+    public function lex($string): array
     {
         $tokens = $this->lexer->lex($string);
 
         // ignore whitespace
         $tokens = array_filter($tokens, function ($token) {
-            return $token[0] !== static::T_WHITESPACE;
+            return $token[0] !== Tokens::T_WHITESPACE;
         });
+
+        // transform arrays into token objects
+        /** @var Token[] $tokens */
+        $tokens = array_map(function (array $token) {
+            return new Token($token[0], $token[1], $token[2]);
+        }, $tokens);
 
         // make sure we return a numerically indexed array
         return array_values($tokens);

@@ -4,6 +4,7 @@ namespace SearchQueryParser\Test;
 
 use PHPUnit\Framework\TestCase;
 use SearchQueryParser\Lexer;
+use SearchQueryParser\Tokens;
 
 class LexerTest extends TestCase
 {
@@ -24,7 +25,7 @@ class LexerTest extends TestCase
 
         $whitespaceTokens = [];
         foreach ($tokens as $token) {
-            if ($token[0] === Lexer::T_WHITESPACE) {
+            if ($token->isTypeOf(Tokens::T_WHITESPACE)) {
                 $whitespaceTokens[] = $token;
             }
         }
@@ -37,7 +38,7 @@ class LexerTest extends TestCase
         $tokens = $this->lexer->lex('foo');
 
         $this->assertCount(1, $tokens);
-        $this->assertEquals(Lexer::T_TERM, $tokens[0][0]);
+        $this->assertEquals(Tokens::T_TERM, $tokens[0]->getToken());
     }
 
     public function testNegatedTerm()
@@ -45,7 +46,7 @@ class LexerTest extends TestCase
         $tokens = $this->lexer->lex('!foo');
 
         $this->assertCount(2, $tokens);
-        $this->assertEquals(Lexer::T_NEGATION, $tokens[0][0]);
-        $this->assertEquals(Lexer::T_TERM, $tokens[1][0]);
+        $this->assertEquals(Tokens::T_NEGATION, $tokens[0]->getToken());
+        $this->assertEquals(Tokens::T_TERM, $tokens[1]->getToken());
     }
 }

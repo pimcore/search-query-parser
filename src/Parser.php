@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SearchQueryParser;
 
 use SearchQueryParser\Part\Keyword;
@@ -9,11 +11,11 @@ use SearchQueryParser\Part\Term;
 class Parser implements ParserInterface
 {
     /**
-     * @param array $tokens
+     * @param Token[] $tokens
      *
      * @return Query
      */
-    public function parse(array $tokens)
+    public function parse(array $tokens): Query
     {
         $query = new Query();
 
@@ -21,25 +23,29 @@ class Parser implements ParserInterface
         $queryStack   = [];
         $currentQuery = $query;
 
+        /** @var Token $previousToken */
         $previousToken = null;
-
-        $termTokens = [
-            Lexer::T_TERM,
-            Lexer::T_TERM_QUOTED
-        ];
 
         for ($i = 0; $i < count($tokens); $i++) {
             $token = $tokens[$i];
 
+            if (!$token instanceof Token) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Token at index %d must be of type Token, "%s" given',
+                    $i,
+                    is_object($token) ? get_class($token) : gettype($token)
+                ));
+            }
+
             // brace open/close - sub-queries
-            if ($token[0] === Lexer::T_BRACE_OPEN) {
+            if ($token->isTypeOf(Tokens::T_BRACE_OPEN)) {
                 array_push($queryStack, $currentQuery);
 
                 $negated      = $this->isNegated($i, $tokens);
                 $currentQuery = new Query($negated);
             }
 
-            if ($token[0] === Lexer::T_BRACE_CLOSE) {
+            if ($token->isTypeOf(Tokens::T_BRACE_CLOSE)) {
                 if (count($queryStack) === 0) {
                     throw new ParserException('Can\'t close sub query as query stack is empty');
                 }
@@ -50,7 +56,7 @@ class Parser implements ParserInterface
             }
 
             // terms (the actual values we're looking for)
-            if (in_array($token[0], $termTokens)) {
+            if (in_array($token->getToken(), Tokens::getTermTokens())) {
                 $value   = $this->normalizeTerm($token);
                 $fuzzy   = $this->isFuzzy($token, $value);
                 $negated = $this->isNegated($i, $tokens);
@@ -74,15 +80,15 @@ class Parser implements ParserInterface
             }
 
             // keywords (AND, OR)
-            if ($token[0] === Lexer::T_KEYWORD) {
-                if ($previousToken && $previousToken[0] === Lexer::T_KEYWORD) {
+            if ($token->isTypeOf(Tokens::T_KEYWORD)) {
+                if ($previousToken && $previousToken->isTypeOf(Tokens::T_KEYWORD)) {
                     throw new ParserException(sprintf(
                         'Keyword can\'t be succeeded by another keyword (%s %s)',
-                        $previousToken[2], $token[2]
+                        $previousToken->getContent(), $token->getContent()
                     ));
                 }
 
-                $currentQuery->addPart(new Keyword($token[2]));
+                $currentQuery->addPart(new Keyword($token->getContent()));
             }
 
             $previousToken = $token;
@@ -94,14 +100,14 @@ class Parser implements ParserInterface
     /**
      * Check if the token is fuzzy (is not quoted and contains *)
      *
-     * @param array $token
+     * @param Token $token
      * @param string $value
      *
      * @return bool
      */
-    protected function isFuzzy(array $token, $value): bool
+    protected function isFuzzy(Token $token, $value): bool
     {
-        if (in_array($token[0], [Lexer::T_TERM_QUOTED])) {
+        if ($token->isTypeOf([Tokens::T_TERM_QUOTED, Tokens::T_TERM_QUOTED_SINGLE])) {
             return false;
         }
 
@@ -112,11 +118,11 @@ class Parser implements ParserInterface
      * Check if expression was negated by looking back at previous tokens
      *
      * @param $index
-     * @param array $tokens
+     * @param Token[] $tokens
      *
      * @return bool
      */
-    protected function isNegated($index, array $tokens)
+    protected function isNegated($index, array $tokens): bool
     {
         $negated = false;
 
@@ -126,7 +132,7 @@ class Parser implements ParserInterface
         }
 
         for ($i = $startIndex; $i >= 0; $i--) {
-            if ($tokens[$i][0] === Lexer::T_NEGATION) {
+            if ($tokens[$i]->isTypeOf(Tokens::T_NEGATION)) {
                 $negated = !$negated;
             } else {
                 break;
@@ -139,15 +145,18 @@ class Parser implements ParserInterface
     /**
      * Normalize term (strip quotes)
      *
-     * @param array $token
+     * @param Token $token
      *
      * @return string
      */
-    protected function normalizeTerm(array $token)
+    protected function normalizeTerm(Token $token): string
     {
-        $term = $token[2];
-        if ($token[0] === Lexer::T_TERM_QUOTED) {
+        $term = $token->getContent();
+
+        if ($token->isTypeOf(Tokens::T_TERM_QUOTED)) {
             $term = preg_replace('/^"(.*)"$/', '$1', $term);
+        } elseif ($token->isTypeOf(Tokens::T_TERM_QUOTED_SINGLE)) {
+            $term = preg_replace('/^\'(.*)\'$/', '$1', $term);
         }
 
         return $term;
