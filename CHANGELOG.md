@@ -5,4 +5,5 @@ Changelog
 -----
 
 * Changed fuzzy search syntax from `foo` to `*foo*`, defaulting to non-fuzzy
+* Changed lexer output to `Token` value objects
 

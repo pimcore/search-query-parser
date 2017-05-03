@@ -31,7 +31,7 @@ Negation: `!<term> !(<query>) !*<fuzzy-term>`
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$input = 'doe AND 1212 AND !foo OR (!(amya AND 12) blah) OR baz'; // complex query
+$input = 'doe AND 1212 AND !foo OR (!(am*ya AND 12) blah) OR baz'; // complex query
 $input = '*john* !502* AND foobar'; // LIKE %john% AND NOT LIKE 502% AND = foobar
 
 // tokenizes query string
@@ -83,4 +83,5 @@ dump(\SearchQueryParser\SearchQueryParser::parseQuery($input));
 
 ## Tests
 
-There are a couple of simple end-to-end tests checking the output for a defined input. Just run `phpunit` from the project root.
+There are a couple of simple end-to-end tests checking the output for a defined input. Just run `vendor/bin/phpunit` from
+the project root.
