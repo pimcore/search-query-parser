@@ -15,11 +15,11 @@ cache:
   stage: unit_test
   when: always
   script:
-    - phpunit
+    - vendor/bin/phpunit
 
-test:unit:php56:
+test:unit:php70:
   <<: *unit_test_definition
-  image: tetraweb/php:5.6
+  image: tetraweb/php:7.0
 
 test:unit:php71:
   <<: *unit_test_definition
