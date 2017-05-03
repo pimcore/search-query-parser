@@ -44,9 +44,9 @@ final class Tokens
 
         if (null === $termTokens) {
             $termTokens = [
-                Tokens::T_TERM,
-                Tokens::T_TERM_QUOTED,
-                Tokens::T_TERM_QUOTED_SINGLE
+                self::T_TERM,
+                self::T_TERM_QUOTED,
+                self::T_TERM_QUOTED_SINGLE
             ];
         }
 
