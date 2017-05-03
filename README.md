@@ -21,7 +21,7 @@ Search terms can be AND/OR combined, negated, grouped with parentheses and modif
 
 ### Modifiers
 
-Fuzzy search: `*<term>*`
+Fuzzy search: `*<term>*`    
 Negation: `!<term> !(<query>) !*<fuzzy-term>`
 
 ## Usage
