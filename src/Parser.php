@@ -105,7 +105,7 @@ class Parser implements ParserInterface
      *
      * @return bool
      */
-    protected function isFuzzy(Token $token, $value): bool
+    private function isFuzzy(Token $token, string $value): bool
     {
         if ($token->isTypeOf([Tokens::T_TERM_QUOTED, Tokens::T_TERM_QUOTED_SINGLE])) {
             return false;
@@ -117,12 +117,12 @@ class Parser implements ParserInterface
     /**
      * Check if expression was negated by looking back at previous tokens
      *
-     * @param $index
+     * @param int $index
      * @param Token[] $tokens
      *
      * @return bool
      */
-    protected function isNegated($index, array $tokens): bool
+    private function isNegated(int $index, array $tokens): bool
     {
         $negated = false;
 
@@ -149,7 +149,7 @@ class Parser implements ParserInterface
      *
      * @return string
      */
-    protected function normalizeTerm(Token $token): string
+    private function normalizeTerm(Token $token): string
     {
         $term = $token->getContent();
 

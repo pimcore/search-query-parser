@@ -1,23 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SearchQueryParser\Part;
 
-class Query implements PartInterface
+final class Query implements PartInterface
 {
     /**
      * @var PartInterface[]
      */
-    protected $parts = [];
+    private $parts = [];
 
     /**
      * @var bool
      */
-    protected $negate = false;
+    private $negate = false;
 
     /**
      * @param bool $negate
      */
-    public function __construct($negate = false)
+    public function __construct(bool $negate = false)
     {
         $this->negate = $negate;
     }
@@ -25,7 +27,7 @@ class Query implements PartInterface
     /**
      * @return bool
      */
-    public function isNegated()
+    public function isNegated(): bool
     {
         return $this->negate;
     }
@@ -41,7 +43,7 @@ class Query implements PartInterface
     /**
      * @return PartInterface[]
      */
-    public function getParts()
+    public function getParts(): array
     {
         return $this->parts;
     }
@@ -51,7 +53,7 @@ class Query implements PartInterface
      *
      * @return PartInterface
      */
-    public function getPart($index)
+    public function getPart(int $index): PartInterface
     {
         if (isset($this->parts[$index])) {
             return $this->parts[$index];
@@ -61,7 +63,7 @@ class Query implements PartInterface
     }
 
     /**
-     * @return PartInterface
+     * @return PartInterface|null
      */
     public function getLastPart()
     {

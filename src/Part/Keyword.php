@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SearchQueryParser\Part;
 
-class Keyword implements PartInterface
+final class Keyword implements PartInterface
 {
     /**
      * @var string
      */
-    protected $keyword;
+    private $keyword;
 
     /**
      * @param string $keyword
      */
-    public function __construct($keyword)
+    public function __construct(string $keyword)
     {
         $this->keyword = $keyword;
     }
@@ -20,7 +22,7 @@ class Keyword implements PartInterface
     /**
      * @return string
      */
-    public function getKeyword()
+    public function getKeyword(): string
     {
         return $this->keyword;
     }

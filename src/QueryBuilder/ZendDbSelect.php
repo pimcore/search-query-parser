@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SearchQueryParser\QueryBuilder;
 
 use SearchQueryParser\Part\Keyword;
@@ -36,7 +38,7 @@ class ZendDbSelect
      *
      * @return \Zend_Db_Select
      */
-    public function processQuery(\Zend_Db_Select $select, Query $query)
+    public function processQuery(\Zend_Db_Select $select, Query $query): \Zend_Db_Select
     {
         if (empty($this->fields)) {
             return $select;
@@ -122,7 +124,7 @@ class ZendDbSelect
      *
      * @return string
      */
-    protected function buildTermCondition(Term $term, $field)
+    protected function buildTermCondition(Term $term, string $field): string
     {
         $condition = null;
         if ($term->isFuzzy()) {
@@ -147,7 +149,7 @@ class ZendDbSelect
      *
      * @return string
      */
-    protected function buildFuzzyValue($value)
+    protected function buildFuzzyValue(string $value): string
     {
         if ($this->getOption('stripWildcards', false)) {
             $value = str_replace(['%', '_'], '', $value);

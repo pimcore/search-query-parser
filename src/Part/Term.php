@@ -1,30 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SearchQueryParser\Part;
 
-class Term implements PartInterface
+final class Term implements PartInterface
 {
     /**
      * @var string
      */
-    protected $term;
+    private $term;
 
     /**
      * @var bool
      */
-    protected $negate = false;
+    private $negate = false;
 
     /**
      * @var bool
      */
-    protected $fuzzy = true;
+    private $fuzzy = true;
 
     /**
      * @param string $term
      * @param bool $fuzzy
      * @param bool $negate
      */
-    public function __construct($term, $fuzzy = true, $negate = false)
+    public function __construct(string $term, bool $fuzzy = true, bool $negate = false)
     {
         $this->term   = $term;
         $this->fuzzy  = $fuzzy;
@@ -34,7 +36,7 @@ class Term implements PartInterface
     /**
      * @return string
      */
-    public function getTerm()
+    public function getTerm(): string
     {
         return $this->term;
     }
@@ -42,7 +44,7 @@ class Term implements PartInterface
     /**
      * @return bool
      */
-    public function isNegated()
+    public function isNegated(): bool
     {
         return $this->negate;
     }
@@ -50,7 +52,7 @@ class Term implements PartInterface
     /**
      * @return bool
      */
-    public function isFuzzy()
+    public function isFuzzy(): bool
     {
         return $this->fuzzy;
     }

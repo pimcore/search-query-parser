@@ -11,5 +11,5 @@ interface ParserInterface
      *
      * @return Query
      */
-    public function parse(array $tokens);
+    public function parse(array $tokens): Query;
 }
