@@ -35,13 +35,11 @@ class ZendDbSelect
     /**
      * @param \Zend_Db_Select $select
      * @param Query $query
-     *
-     * @return \Zend_Db_Select
      */
-    public function processQuery(\Zend_Db_Select $select, Query $query): \Zend_Db_Select
+    public function processQuery(\Zend_Db_Select $select, Query $query)
     {
         if (empty($this->fields)) {
-            return $select;
+            throw new \RuntimeException('Query can\'t be processed as no fields were configured');
         }
 
         $previousPart = null;
@@ -99,8 +97,6 @@ class ZendDbSelect
                 }
             }
         }
-
-        return $select;
     }
 
     /**

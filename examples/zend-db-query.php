@@ -36,5 +36,5 @@ $queryBuilder = new \SearchQueryParser\QueryBuilder\ZendDbSelect([
     'bar'
 ]);
 
-$select = $queryBuilder->processQuery($select, $query);
+$queryBuilder->processQuery($select, $query);
 dump($select->__toString());
