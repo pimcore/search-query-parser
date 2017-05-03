@@ -13,16 +13,16 @@ Currently used with customer data framework (CMF).
 Search terms can be AND/OR combined, negated, grouped with parentheses and modified to fuzzy exact search with the following syntax:
 
 * `foo`
-* `foo AND bar`
-* `foo OR bar`
-* `foo OR !bar`
-* `foo AND "bar"`
+* `foo* AND bar`
+* `*foo* OR *bar*`
+* `*foo* OR !*bar*`
+* `*foo* AND bar`
 * `foo OR (bar AND baz)`
 
 ### Modifiers
 
-Exact search: `"<term>"`
-Negation: `!<term> !(<query>)`
+Fuzzy search: `*<term>*`
+Negation: `!<term> !(<query>) !*<fuzzy-term>`
 
 ## Usage
 
@@ -31,8 +31,8 @@ Negation: `!<term> !(<query>)`
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$input = 'doe AND "1212" AND !foo OR (!("amya" AND 12) blah) OR baz'; // complex query
-$input = 'john !5020 AND "foobar"'; // LIKE %john% AND NOT LIKE %5020% AND = foobar
+$input = 'doe AND 1212 AND !foo OR (!(amya AND 12) blah) OR baz'; // complex query
+$input = '*john* !502* AND foobar'; // LIKE %john% AND NOT LIKE 502% AND = foobar
 
 // tokenizes query string
 $lexer = new \SearchQueryParser\Lexer();
@@ -75,7 +75,7 @@ There's a facade class which can be called if you want to use the standard lexer
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$input = 'foo !bar "doe"';
+$input = 'foo !bar *doe*';
 
 // returns an abstract query
 dump(\SearchQueryParser\SearchQueryParser::parseQuery($input));
