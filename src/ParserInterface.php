@@ -8,6 +8,7 @@ interface ParserInterface
 {
     /**
      * @param array $tokens
+     *
      * @return Query
      */
     public function parse(array $tokens);

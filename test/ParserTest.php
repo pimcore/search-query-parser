@@ -30,6 +30,7 @@ class ParserTest extends TestCase
 
     /**
      * @param $input
+     *
      * @return \SearchQueryParser\Part\Query
      */
     protected function getQuery($input)

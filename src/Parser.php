@@ -2,14 +2,15 @@
 
 namespace SearchQueryParser;
 
-use SearchQueryParser\Part\Term;
 use SearchQueryParser\Part\Keyword;
 use SearchQueryParser\Part\Query;
+use SearchQueryParser\Part\Term;
 
 class Parser implements ParserInterface
 {
     /**
      * @param array $tokens
+     *
      * @return Query
      */
     public function parse(array $tokens)
@@ -95,6 +96,7 @@ class Parser implements ParserInterface
      *
      * @param $index
      * @param array $tokens
+     *
      * @return bool
      */
     protected function isNegated($index, array $tokens)
@@ -121,6 +123,7 @@ class Parser implements ParserInterface
      * Normalize term (strip quotes)
      *
      * @param array $token
+     *
      * @return string
      */
     protected function normalizeTerm(array $token)

@@ -11,6 +11,7 @@ class SearchQueryParser
      * @param $query
      * @param LexerInterface|null $lexer
      * @param ParserInterface|null $parser
+     *
      * @return Part\Query
      */
     public static function parseQuery($query, LexerInterface $lexer = null, ParserInterface $parser = null)
@@ -30,11 +31,11 @@ class SearchQueryParser
     }
 
     // static class
-    private final function __construct()
+    final private function __construct()
     {
     }
 
-    private final function __clone()
+    final private function __clone()
     {
     }
 }

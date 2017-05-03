@@ -57,6 +57,7 @@ class Lexer implements LexerInterface
 
     /**
      * @param $string
+     *
      * @return array
      */
     public function lex($string)

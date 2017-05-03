@@ -33,6 +33,7 @@ class ZendDbSelect
     /**
      * @param \Zend_Db_Select $select
      * @param Query $query
+     *
      * @return \Zend_Db_Select
      */
     public function processQuery(\Zend_Db_Select $select, Query $query)
@@ -72,7 +73,7 @@ class ZendDbSelect
                         $subQuery->orWhere($condition, $value);
                     }
                 }
-            } else if ($part instanceof Query) {
+            } elseif ($part instanceof Query) {
                 $subQuery = $select->getAdapter()->select();
                 $this->processQuery($subQuery, $part);
 
@@ -103,6 +104,7 @@ class ZendDbSelect
     /**
      * @param string $option
      * @param mixed $defaultValue
+     *
      * @return mixed
      */
     protected function getOption($option, $defaultValue = null)
@@ -117,6 +119,7 @@ class ZendDbSelect
     /**
      * @param Term $term
      * @param string $field
+     *
      * @return string
      */
     protected function buildTermCondition(Term $term, $field)
@@ -141,6 +144,7 @@ class ZendDbSelect
 
     /**
      * @param string $value
+     *
      * @return string
      */
     protected function buildFuzzyValue($value)
@@ -150,7 +154,6 @@ class ZendDbSelect
         }
 
         $value = '%' . $value . '%';
-
 
         return $value;
     }

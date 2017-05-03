@@ -19,9 +19,9 @@ $query = $parser->parse($tokens);
 dump($query);
 
 // use the Zend_Db query builder to transform the Query into conditions
-$db = new Zend_Db_Adapter_Pdo_Sqlite(array(
+$db = new Zend_Db_Adapter_Pdo_Sqlite([
     'dbname' => ':memory:'
-));
+]);
 
 // dummy query
 $select = $db

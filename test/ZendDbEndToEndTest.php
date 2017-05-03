@@ -41,6 +41,7 @@ class ZendDbEndToEndTest extends TestCase
      * @param string $input
      * @param array $fields
      * @param int|null $expectedParts
+     *
      * @return string
      */
     protected function getWhere($input, array $fields = [], $expectedParts = null)

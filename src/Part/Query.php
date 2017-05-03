@@ -48,6 +48,7 @@ class Query implements PartInterface
 
     /**
      * @param int $index
+     *
      * @return PartInterface
      */
     public function getPart($index)
