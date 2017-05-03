@@ -153,7 +153,7 @@ class ZendDbSelect
             $value = str_replace(['%', '_'], '', $value);
         }
 
-        $value = '%' . $value . '%';
+        $value = str_replace('*', '%', $value);
 
         return $value;
     }

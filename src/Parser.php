@@ -52,7 +52,7 @@ class Parser implements ParserInterface
             // terms (the actual values we're looking for)
             if (in_array($token[0], $termTokens)) {
                 $value   = $this->normalizeTerm($token);
-                $fuzzy   = $token[0] !== Lexer::T_TERM_QUOTED;
+                $fuzzy   = $this->isFuzzy($token, $value);
                 $negated = $this->isNegated($i, $tokens);
                 $term    = new Term($value, $fuzzy, $negated);
 
@@ -89,6 +89,23 @@ class Parser implements ParserInterface
         }
 
         return $query;
+    }
+
+    /**
+     * Check if the token is fuzzy (is not quoted and contains *)
+     *
+     * @param array $token
+     * @param string $value
+     *
+     * @return bool
+     */
+    protected function isFuzzy(array $token, $value): bool
+    {
+        if (in_array($token[0], [Lexer::T_TERM_QUOTED])) {
+            return false;
+        }
+
+        return false !== strpos($value, '*');
     }
 
     /**
