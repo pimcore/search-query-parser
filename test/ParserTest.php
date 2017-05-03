@@ -120,6 +120,28 @@ class ParserTest extends TestCase
         );
     }
 
+    public function testQuotedTermIsNotFuzzy()
+    {
+        $query = $this->getQuery('"*foo*"');
+
+        $this->assertCount(1, $query->getParts());
+        $this->assertTerm(
+            $query->getPart(0),
+            '*foo*', false, false
+        );
+    }
+
+    public function testNegatedQuotedTermIsNotFuzzy()
+    {
+        $query = $this->getQuery('!"*foo*"');
+
+        $this->assertCount(1, $query->getParts());
+        $this->assertTerm(
+            $query->getPart(0),
+            '*foo*', false, true
+        );
+    }
+
     public function testTermsAreAndCombinedByDefault()
     {
         $query = $this->getQuery('foo bar');
