@@ -103,7 +103,7 @@ class ZendDbEndToEndTest extends TestCase
 
         $this->assertEquals(
             $where,
-            "((field1 LIKE '%foo'))"
+            "((field1 LIKE 'foo%'))"
         );
     }
 
@@ -219,10 +219,10 @@ class ZendDbEndToEndTest extends TestCase
 
     public function testMultipleFieldsWithMultipleTerms()
     {
-        $where = $this->getWhere('foo AND bar', ['field1', 'field2'], 2);
+        $where = $this->getWhere('*foo AND *bar*', ['field1', 'field2'], 2);
 
         $this->assertEquals(
-            "((field1 LIKE '%foo%') OR (field2 LIKE '%foo%')) AND ((field1 LIKE '%bar%') OR (field2 LIKE '%bar%'))",
+            "((field1 LIKE '%foo') OR (field2 LIKE '%foo')) AND ((field1 LIKE '%bar%') OR (field2 LIKE '%bar%'))",
             $where
         );
     }

@@ -137,9 +137,9 @@ class ParserTest extends TestCase
 
         $this->assertCount(3, $query->getParts());
 
-        $this->assertTerm($query->getPart(0), 'foo*', false);
+        $this->assertTerm($query->getPart(0), 'foo*', true);
         $this->assertKeyword($query->getPart(1), 'AND');
-        $this->assertTerm($query->getPart(2), '*bar*', false);
+        $this->assertTerm($query->getPart(2), '*bar*', true);
     }
 
     public function testTermsAreAndCombinedByDefaultWhenNegated()
@@ -150,7 +150,7 @@ class ParserTest extends TestCase
 
         $this->assertTerm($query->getPart(0), 'foo');
         $this->assertKeyword($query->getPart(1), 'AND');
-        $this->assertTerm($query->getPart(2), 'bar', true, true);
+        $this->assertTerm($query->getPart(2), 'bar', false, true);
     }
 
     public function testTermsAreAndCombinedExplicitely()
@@ -172,7 +172,7 @@ class ParserTest extends TestCase
 
         $this->assertTerm($query->getPart(0), 'foo');
         $this->assertKeyword($query->getPart(1), 'AND');
-        $this->assertTerm($query->getPart(2), 'bar', true, true);
+        $this->assertTerm($query->getPart(2), 'bar', false, true);
     }
 
     public function testTermsAreOrCombinedExplicitely()
@@ -194,7 +194,7 @@ class ParserTest extends TestCase
 
         $this->assertTerm($query->getPart(0), 'foo');
         $this->assertKeyword($query->getPart(1), 'OR');
-        $this->assertTerm($query->getPart(2), 'bar', true, true);
+        $this->assertTerm($query->getPart(2), 'bar', false, true);
     }
 
     /**
@@ -203,7 +203,7 @@ class ParserTest extends TestCase
      * @param bool $fuzzy
      * @param bool $negated
      */
-    protected function assertTerm($term, $value, $fuzzy = true, $negated = false)
+    protected function assertTerm($term, $value, $fuzzy = false, $negated = false)
     {
         $this->assertInstanceOf(Term::class, $term);
         $this->assertEquals($value, $term->getTerm());
