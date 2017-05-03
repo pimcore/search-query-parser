@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SearchQueryParser;
 
 use SearchQueryParser\Part\Query;

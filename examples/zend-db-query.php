@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $input = 'doe AND "1212" AND !foo OR (!("amya" AND 12) blah) OR baz'; // complex query
