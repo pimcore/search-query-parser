@@ -19,8 +19,6 @@ class ZendDbEndToEndTest extends TestCase
 
     protected function setUp()
     {
-        parent::setUp();
-
         $this->db = new \Zend_Db_Adapter_Pdo_Sqlite([
             'dbname' => ':memory:'
         ]);
@@ -69,9 +67,9 @@ class ZendDbEndToEndTest extends TestCase
         return $where;
     }
 
-    public function testFuzzyTerm()
+    public function testFuzzyTermWithEnclosingWildcards()
     {
-        $where = $this->getWhere('foo', ['field1'], 1);
+        $where = $this->getWhere('*foo*', ['field1'], 1);
 
         $this->assertEquals(
             $where,
@@ -79,9 +77,49 @@ class ZendDbEndToEndTest extends TestCase
         );
     }
 
-    public function testNegatedFuzzyTerm()
+    public function testFuzzyTermWithMultipleWildcards()
     {
-        $where = $this->getWhere('!foo', ['field1'], 1);
+        $where = $this->getWhere('*fo*o*', ['field1'], 1);
+
+        $this->assertEquals(
+            $where,
+            "((field1 LIKE '%fo%o%'))"
+        );
+    }
+
+    public function testFuzzyTermWithStartingWildcard()
+    {
+        $where = $this->getWhere('*foo', ['field1'], 1);
+
+        $this->assertEquals(
+            $where,
+            "((field1 LIKE '%foo'))"
+        );
+    }
+
+    public function testFuzzyTermWithTerminatingWildcard()
+    {
+        $where = $this->getWhere('foo*', ['field1'], 1);
+
+        $this->assertEquals(
+            $where,
+            "((field1 LIKE '%foo'))"
+        );
+    }
+
+    public function testFuzzyTermWithIncludedWildcard()
+    {
+        $where = $this->getWhere('fo*o', ['field1'], 1);
+
+        $this->assertEquals(
+            $where,
+            "((field1 LIKE 'fo%o'))"
+        );
+    }
+
+    public function testNegatedFuzzyTermWithEnclosingWildcards()
+    {
+        $where = $this->getWhere('!*foo*', ['field1'], 1);
 
         $this->assertEquals(
             $where,
@@ -89,9 +127,49 @@ class ZendDbEndToEndTest extends TestCase
         );
     }
 
-    public function testQuotedTerm()
+    public function testNegatedFuzzyTermWithMultipleWildcards()
     {
-        $where = $this->getWhere('"foo"', ['field1'], 1);
+        $where = $this->getWhere('!*fo*o*', ['field1'], 1);
+
+        $this->assertEquals(
+            $where,
+            "((field1 IS NULL OR field1 NOT LIKE '%fo%o%'))"
+        );
+    }
+
+    public function testNegatedFuzzyTermWithStartingWildcard()
+    {
+        $where = $this->getWhere('!*foo', ['field1'], 1);
+
+        $this->assertEquals(
+            $where,
+            "((field1 IS NULL OR field1 NOT LIKE '%foo'))"
+        );
+    }
+
+    public function testNegatedFuzzyTermWithTerminatingWildcard()
+    {
+        $where = $this->getWhere('!foo*', ['field1'], 1);
+
+        $this->assertEquals(
+            $where,
+            "((field1 IS NULL OR field1 NOT LIKE 'foo%'))"
+        );
+    }
+
+    public function testNegatedFuzzyTermWithIncludedWildcard()
+    {
+        $where = $this->getWhere('!fo*o', ['field1'], 1);
+
+        $this->assertEquals(
+            $where,
+            "((field1 IS NULL OR field1 NOT LIKE 'fo%o'))"
+        );
+    }
+
+    public function testNonFuzzyTerm()
+    {
+        $where = $this->getWhere('foo', ['field1'], 1);
 
         $this->assertEquals(
             $where,
@@ -99,9 +177,9 @@ class ZendDbEndToEndTest extends TestCase
         );
     }
 
-    public function testNegatedQuotedTerm()
+    public function testNegatedNonFuzzyTerm()
     {
-        $where = $this->getWhere('!"foo"', ['field1'], 1);
+        $where = $this->getWhere('!foo', ['field1'], 1);
 
         $this->assertEquals(
             $where,
@@ -109,13 +187,33 @@ class ZendDbEndToEndTest extends TestCase
         );
     }
 
-    public function testSingleFieldWithMultipleTerms()
+    public function testSingleFieldWithMultipleFuzzyTerms()
+    {
+        $where = $this->getWhere('*foo* AND *bar*', ['field1'], 2);
+
+        $this->assertEquals(
+            $where,
+            "((field1 LIKE '%foo%')) AND ((field1 LIKE '%bar%'))"
+        );
+    }
+
+    public function testSingleFieldWithMultipleNonFuzzyTerms()
     {
         $where = $this->getWhere('foo AND bar', ['field1'], 2);
 
         $this->assertEquals(
             $where,
-            "((field1 LIKE '%foo%')) AND ((field1 LIKE '%bar%'))"
+            "((field1 = 'foo')) AND ((field1 = 'bar'))"
+        );
+    }
+
+    public function testSingleFieldWithMixedFuzzyTerms()
+    {
+        $where = $this->getWhere('foo AND *bar*', ['field1'], 2);
+
+        $this->assertEquals(
+            $where,
+            "((field1 = 'foo')) AND ((field1 LIKE '%bar%'))"
         );
     }
 
@@ -132,13 +230,13 @@ class ZendDbEndToEndTest extends TestCase
     public function testNegatedQuery()
     {
         $where = $this->getWhere(
-            '!(foo AND bar)',
+            '!(foo AND bar*)',
             ['field1'],
             1
         );
 
         $this->assertEquals(
-            "(NOT(((field1 LIKE '%foo%')) AND ((field1 LIKE '%bar%'))))",
+            "(NOT(((field1 = 'foo')) AND ((field1 LIKE 'bar%'))))",
             $where
         );
     }
@@ -147,13 +245,13 @@ class ZendDbEndToEndTest extends TestCase
     public function testComplexQuery()
     {
         $where = $this->getWhere(
-            'doe AND "1212" AND !foo OR (!("amya" AND 12) blah) OR baz',
+            '*doe* AND 1212 AND !*foo OR (!(amya AND *12*) bl*ah) OR *b*az*',
             ['field1', 'field2'],
             5
         );
 
         $this->assertEquals(
-            "((field1 LIKE '%doe%') OR (field2 LIKE '%doe%')) AND ((field1 = '1212') OR (field2 = '1212')) AND ((field1 IS NULL OR field1 NOT LIKE '%foo%') AND (field2 IS NULL OR field2 NOT LIKE '%foo%')) OR ((NOT(((field1 = 'amya') OR (field2 = 'amya')) AND ((field1 LIKE '%12%') OR (field2 LIKE '%12%')))) AND ((field1 LIKE '%blah%') OR (field2 LIKE '%blah%'))) OR ((field1 LIKE '%baz%') OR (field2 LIKE '%baz%'))",
+            "((field1 LIKE '%doe%') OR (field2 LIKE '%doe%')) AND ((field1 = '1212') OR (field2 = '1212')) AND ((field1 IS NULL OR field1 NOT LIKE '%foo') AND (field2 IS NULL OR field2 NOT LIKE '%foo')) OR ((NOT(((field1 = 'amya') OR (field2 = 'amya')) AND ((field1 LIKE '%12%') OR (field2 LIKE '%12%')))) AND ((field1 LIKE 'bl%ah') OR (field2 LIKE 'bl%ah'))) OR ((field1 LIKE '%b%az%') OR (field2 LIKE '%b%az%'))",
             $where
         );
     }

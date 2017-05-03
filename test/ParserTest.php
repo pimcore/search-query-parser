@@ -50,7 +50,7 @@ class ParserTest extends TestCase
         $this->assertCount(1, $query->getParts());
         $this->assertTerm(
             $query->getPart(0),
-            'foo', true, false
+            'foo', false, false
         );
     }
 
@@ -61,29 +61,62 @@ class ParserTest extends TestCase
         $this->assertCount(1, $query->getParts());
         $this->assertTerm(
             $query->getPart(0),
-            'foo', true, true
-        );
-    }
-
-    public function testQuotedTerm()
-    {
-        $query = $this->getQuery('"foo"');
-
-        $this->assertCount(1, $query->getParts());
-        $this->assertTerm(
-            $query->getPart(0),
-            'foo', false, false
-        );
-    }
-
-    public function testNegatedQuotedTerm()
-    {
-        $query = $this->getQuery('!"foo"');
-
-        $this->assertCount(1, $query->getParts());
-        $this->assertTerm(
-            $query->getPart(0),
             'foo', false, true
+        );
+    }
+
+    public function testFuzzyTerm()
+    {
+        $query = $this->getQuery('*foo*');
+
+        $this->assertCount(1, $query->getParts());
+        $this->assertTerm(
+            $query->getPart(0),
+            '*foo*', true, false
+        );
+    }
+
+    public function testFuzzyTermAtStart()
+    {
+        $query = $this->getQuery('*foo');
+
+        $this->assertCount(1, $query->getParts());
+        $this->assertTerm(
+            $query->getPart(0),
+            '*foo', true, false
+        );
+    }
+
+    public function testFuzzyTermAtEnd()
+    {
+        $query = $this->getQuery('foo*');
+
+        $this->assertCount(1, $query->getParts());
+        $this->assertTerm(
+            $query->getPart(0),
+            'foo*', true, false
+        );
+    }
+
+    public function testFuzzyTermInBetween()
+    {
+        $query = $this->getQuery('fo*o');
+
+        $this->assertCount(1, $query->getParts());
+        $this->assertTerm(
+            $query->getPart(0),
+            'fo*o', true, false
+        );
+    }
+
+    public function testNegatedFuzzyTerm()
+    {
+        $query = $this->getQuery('!*foo*');
+
+        $this->assertCount(1, $query->getParts());
+        $this->assertTerm(
+            $query->getPart(0),
+            '*foo*', true, true
         );
     }
 
@@ -98,15 +131,15 @@ class ParserTest extends TestCase
         $this->assertTerm($query->getPart(2), 'bar');
     }
 
-    public function testTermsAreAndCombinedByDefaultWhenQuoted()
+    public function testTermsAreAndCombinedByDefaultWhenFuzzy()
     {
-        $query = $this->getQuery('"foo" "bar"');
+        $query = $this->getQuery('foo* *bar*');
 
         $this->assertCount(3, $query->getParts());
 
-        $this->assertTerm($query->getPart(0), 'foo', false);
+        $this->assertTerm($query->getPart(0), 'foo*', false);
         $this->assertKeyword($query->getPart(1), 'AND');
-        $this->assertTerm($query->getPart(2), 'bar', false);
+        $this->assertTerm($query->getPart(2), '*bar*', false);
     }
 
     public function testTermsAreAndCombinedByDefaultWhenNegated()
