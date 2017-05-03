@@ -5,7 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $input = 'doe AND "1212" AND !foo OR (!("amya" AND 12) blah) OR baz'; // complex query
-$input = 'john !5020 AND "foobar"'; // LIKE %john% AND NOT LIKE %5020% AND = foobar
+$input = '*john* !5020 AND "foob*ar"'; // LIKE %john% AND != 5020 AND = foob*ar
 dump($input);
 
 $lexer = new \SearchQueryParser\Lexer();
