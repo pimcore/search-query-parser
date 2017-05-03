@@ -189,6 +189,16 @@ class ZendDbEndToEndTest extends TestCase
         );
     }
 
+    public function testSingleFieldWithQuotedAndFuzzyTerms()
+    {
+        $where = $this->getWhere('foo AND \'ba*r\' OR !"*baz*" AND qux*', ['field1'], 4);
+
+        $this->assertEquals(
+            $where,
+            "((field1 = 'foo')) AND ((field1 = 'ba*r')) OR ((field1 IS NULL OR field1 != '*baz*')) AND ((field1 LIKE 'qux%'))"
+        );
+    }
+
     public function testSingleFieldWithMultipleFuzzyTerms()
     {
         $where = $this->getWhere('*foo* AND *bar*', ['field1'], 2);
