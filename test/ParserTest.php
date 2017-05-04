@@ -27,7 +27,7 @@ class ParserTest extends TestCase
     protected function setUp()
     {
         $this->lexer  = new Lexer();
-        $this->parser = new Parser($this->lexer);
+        $this->parser = new Parser();
     }
 
     /**
