@@ -6,8 +6,6 @@ into SQL (or other) queries. The analyzed search query can be used to build comp
 [`Zend_Db` end to end test](test/ZendDbEndToEndTest.php#L71) an an example or have a
 look into [examples/](examples/) for working examples.
 
-Currently used with customer data framework (CMF).
-
 ## Syntax 
 
 Search terms can be AND/OR combined, negated, grouped with parentheses and modified to fuzzy exact search with the following syntax:
