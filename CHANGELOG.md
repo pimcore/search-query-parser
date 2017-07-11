@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.2.3
+-----
+
+* Removed restriction to `@` in terms (denoted strict search in earlier versions)
+
 1.0.0
 -----
 

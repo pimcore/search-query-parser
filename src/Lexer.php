@@ -39,7 +39,7 @@ class Lexer implements LexerInterface
             '!'            => Tokens::T_NEGATION,
             '"[^"]+"'      => Tokens::T_TERM_QUOTED,
             "'[^']+'"      => Tokens::T_TERM_QUOTED_SINGLE,
-            '[^\s!@\(\)]+' => Tokens::T_TERM,
+            '[^\s!\(\)]+'  => Tokens::T_TERM,
             '\s+'          => Tokens::T_WHITESPACE,
         ];
     }
