@@ -1,6 +1,6 @@
 {
-  "name": "elements/search-query-parser",
-  "description": "Parses a simplifies SQL-like query string into a syntax tree which can be used to build search queries",
+  "name": "pimcore/search-query-parser",
+  "description": "Parses a simplified SQL-like query string into a syntax tree which can be used to build search queries",
   "require": {
     "php": ">=7.0",
     "nikic/phlexy": "^0.1.0"
