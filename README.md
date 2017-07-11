@@ -1,5 +1,7 @@
 # SearchQueryParser
 
+[![Build Status](https://travis-ci.org/pimcore/search-query-parser.svg?branch=master)](https://travis-ci.org/pimcore/search-query-parser)
+
 A basic search query parsing library which can be used to transform free-text searches 
 into SQL (or other) queries. The analyzed search query can be used to build complex
 (SQL) queries, searching for a term in multiple fields. Take a look at the 
