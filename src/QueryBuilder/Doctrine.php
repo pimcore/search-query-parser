@@ -8,6 +8,8 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use SearchQueryParser\Part\Keyword;
 use SearchQueryParser\Part\Query;
 use SearchQueryParser\Part\Term;
+use Pimcore\Db;
+use Pimcore\Db\CompatibilityQueryBuilder;
 
 class Doctrine
 {
@@ -39,6 +41,7 @@ class Doctrine
      */
     public function processQuery(QueryBuilder $select, Query $query)
     {
+        $db = Db::get();
         if (empty($this->fields)) {
             throw new \RuntimeException('Query can\'t be processed as no fields were configured');
         }
@@ -54,7 +57,7 @@ class Doctrine
                 continue;
             }
 
-            /** @var QueryBuilder $subQuery */
+            /** @var CompatibilityQueryBuilder $subQuery */
             $subQuery        = null;
             $negatedSubQuery = false;
 
@@ -64,9 +67,9 @@ class Doctrine
                     $value = $this->buildFuzzyValue($value);
                 }
 
-                $subQuery = $select->getConnection()->createQueryBuilder();
+                $subQuery = new CompatibilityQueryBuilder($db);
                 foreach ($this->fields as $field) {
-                    $condition = $this->buildTermCondition($part, $field, $select->getConnection()->quote($value));
+                    $condition = $this->buildTermCondition($part, $field, $db->quote($value));
 
                     if ($part->isNegated()) {
                         $subQuery->andWhere($condition);
@@ -75,7 +78,7 @@ class Doctrine
                     }
                 }
             } elseif ($part instanceof Query) {
-                $subQuery = $select->getConnection()->createQueryBuilder();
+                $subQuery = new CompatibilityQueryBuilder($db);
                 $this->processQuery($subQuery, $part);
 
                 $negatedSubQuery = $part->isNegated();
