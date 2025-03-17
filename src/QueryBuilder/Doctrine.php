@@ -65,6 +65,7 @@ class Doctrine
                 }
 
                 $subQuery = $select->getConnection()->createQueryBuilder();
+                $subQuery->select('1');
                 foreach ($this->fields as $field) {
                     $condition = $this->buildTermCondition($part, $field, $select->getConnection()->quote($value));
 
@@ -76,6 +77,7 @@ class Doctrine
                 }
             } elseif ($part instanceof Query) {
                 $subQuery = $select->getConnection()->createQueryBuilder();
+                $subQuery->select('1');
                 $this->processQuery($subQuery, $part);
 
                 $negatedSubQuery = $part->isNegated();
@@ -85,7 +87,7 @@ class Doctrine
                 // add assembled sub-query where condition to our main query
                 $lastKeyword = array_pop($keywordStack);
 
-                $subWhere = (string) $subQuery->getQueryPart('where');
+                $subWhere = str_replace('SELECT 1 WHERE ', '', $subQuery->getSQL());
 
                 if ($negatedSubQuery) {
                     $subWhere = 'NOT(' . $subWhere . ')';
