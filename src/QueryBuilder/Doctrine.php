@@ -35,7 +35,7 @@ class Doctrine
     }
     public function processQuery(QueryBuilder $select, Query $query, ?Connection $connection = null)
     {
-        // The following fallback is valid only on doctrine/dbal < 4
+        // The following fallback is valid only on `doctrine/dbal` < 4
         if (!$connection && method_exists($select, 'getConnection')) {
             $connection = $select->getConnection();
         }
