@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.0.0
+-----
+
+* To support DBAL v4, SearchQueryParser\QueryBuilder\Doctrine::processQuery() requires a DBAL\Connection as third parameter
+
 1.2.3
 -----
 

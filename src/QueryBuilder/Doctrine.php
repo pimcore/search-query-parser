@@ -8,6 +8,7 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use SearchQueryParser\Part\Keyword;
 use SearchQueryParser\Part\Query;
 use SearchQueryParser\Part\Term;
+use Doctrine\DBAL\Connection;
 
 class Doctrine
 {
@@ -32,13 +33,13 @@ class Doctrine
         $this->fields  = $fields;
         $this->options = array_merge($this->options, $options);
     }
-
-    /**
-     * @param QueryBuilder $select
-     * @param Query $query
-     */
-    public function processQuery(QueryBuilder $select, Query $query)
+    public function processQuery(QueryBuilder $select, Query $query, ?Connection $connection = null)
     {
+        // The following fallback is valid only on `doctrine/dbal` < 4
+        if (!$connection && method_exists($select, 'getConnection')) {
+            $connection = $select->getConnection();
+        }
+
         if (empty($this->fields)) {
             throw new \RuntimeException('Query can\'t be processed as no fields were configured');
         }
@@ -64,9 +65,10 @@ class Doctrine
                     $value = $this->buildFuzzyValue($value);
                 }
 
-                $subQuery = $select->getConnection()->createQueryBuilder();
+                $subQuery = $connection->createQueryBuilder();
+                $subQuery->select('1');
                 foreach ($this->fields as $field) {
-                    $condition = $this->buildTermCondition($part, $field, $select->getConnection()->quote($value));
+                    $condition = $this->buildTermCondition($part, $field, $connection->quote($value));
 
                     if ($part->isNegated()) {
                         $subQuery->andWhere($condition);
@@ -75,8 +77,9 @@ class Doctrine
                     }
                 }
             } elseif ($part instanceof Query) {
-                $subQuery = $select->getConnection()->createQueryBuilder();
-                $this->processQuery($subQuery, $part);
+                $subQuery = $connection->createQueryBuilder();
+                $subQuery->select('1');
+                $this->processQuery($subQuery, $part, $connection);
 
                 $negatedSubQuery = $part->isNegated();
             }
@@ -85,7 +88,7 @@ class Doctrine
                 // add assembled sub-query where condition to our main query
                 $lastKeyword = array_pop($keywordStack);
 
-                $subWhere = (string) $subQuery->getQueryPart('where');
+                $subWhere = str_replace('SELECT 1 WHERE ', '', $subQuery->getSQL());
 
                 if ($negatedSubQuery) {
                     $subWhere = 'NOT(' . $subWhere . ')';
