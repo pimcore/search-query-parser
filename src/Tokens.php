@@ -2,17 +2,34 @@
 
 declare(strict_types=1);
 
+/**
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
+ */
+
 namespace SearchQueryParser;
 
 final class Tokens
 {
     const T_WHITESPACE = 0;
+
     const T_BRACE_OPEN = 1;
+
     const T_BRACE_CLOSE = 2;
+
     const T_KEYWORD = 3;
+
     const T_NEGATION = 4;
+
     const T_TERM = 5;
+
     const T_TERM_QUOTED = 6;
+
     const T_TERM_QUOTED_SINGLE = 7;
 
     /**
