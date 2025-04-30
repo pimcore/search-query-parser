@@ -2,13 +2,23 @@
 
 declare(strict_types=1);
 
+/**
+ * This source file is available under the terms of the
+ * Pimcore Open Core License (POCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (https://www.pimcore.com)
+ *  @license    Pimcore Open Core License (POCL)
+ */
+
 namespace SearchQueryParser\QueryBuilder;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use SearchQueryParser\Part\Keyword;
 use SearchQueryParser\Part\Query;
 use SearchQueryParser\Part\Term;
-use Doctrine\DBAL\Connection;
 
 class Doctrine
 {
@@ -33,6 +43,7 @@ class Doctrine
         $this->fields  = $fields;
         $this->options = array_merge($this->options, $options);
     }
+
     public function processQuery(QueryBuilder $select, Query $query, ?Connection $connection = null)
     {
         // The following fallback is valid only on `doctrine/dbal` < 4
@@ -52,6 +63,7 @@ class Doctrine
         foreach ($query->getParts() as $part) {
             if ($part instanceof Keyword) {
                 array_push($keywordStack, $part);
+
                 continue;
             }
 
