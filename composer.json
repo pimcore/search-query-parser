@@ -28,5 +28,10 @@
     "psr-4": {
       "SearchQueryParser\\Test\\": "test/"
     }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-2026.x": "2026.1.x-dev"
+    },
   }
 }
