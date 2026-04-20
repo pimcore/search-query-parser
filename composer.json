@@ -1,32 +1,34 @@
 {
-  "name": "pimcore/search-query-parser",
-  "description": "Parses a simplified SQL-like query string into a syntax tree which can be used to build search queries",
-  "license": "proprietary",
-  "require": {
-    "php": ">=7.0",
-    "nikic/phlexy": "^0.1.0"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^6.1",
-    "symfony/var-dumper": "^3.2"
-  },
-  "suggest": {
-    "zendframework/zendframework1": "If using the Zend_Db query builder",
-    "pimcore/pimcore": "If using it in combination with Pimcore and CMF"
-  },
-  "config": {
-    "optimize-autoloader": true,
-    "sort-packages": true
-  },
-  "autoload": {
-    "psr-4": {
-      "SearchQueryParser\\": "src/"
+    "name": "pimcore/search-query-parser",
+    "description": "Parses a simplified SQL-like query string into a syntax tree which can be used to build search queries",
+    "license": "proprietary",
+    "require": {
+        "php": ">=7.0",
+        "nikic/phlexy": "^0.1.0"
     },
-    "exclude-from-classmap": ["examples"]
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "SearchQueryParser\\Test\\": "test/"
+    "require-dev": {
+        "phpunit/phpunit": "^12.5.23 || ^13.1.7",
+        "symfony/var-dumper": "^3.2"
+    },
+    "suggest": {
+        "zendframework/zendframework1": "If using the Zend_Db query builder",
+        "pimcore/pimcore": "If using it in combination with Pimcore and CMF"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "SearchQueryParser\\": "src/"
+        },
+        "exclude-from-classmap": [
+            "examples"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SearchQueryParser\\Test\\": "test/"
+        }
     }
-  }
 }
