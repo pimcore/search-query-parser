@@ -3,7 +3,7 @@
   "description": "Parses a simplified SQL-like query string into a syntax tree which can be used to build search queries",
   "license": "proprietary",
   "require": {
-    "php": ">=8.0",
+    "php": ">=8.3",
     "nikic/phlexy": "^0.1.0"
   },
   "require-dev": {
